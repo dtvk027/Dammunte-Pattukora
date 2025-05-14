@@ -5,9 +5,10 @@ const retry  = document.getElementById("retryBtn");
 let pushpa, shekawat, obstacles, score, highScore, speed, gravity, groundY, gameOver, frame;
 
 function init(){
-  // Character sizes
+  // Character sizes (unchanged)
   pushpa    = { x:50,  y:220, w:40, h:80, vy:0, jumping:false, ducking:false };
-  shekawat  = { x:0,   y:220, w:40, h:80 };
+  // Start Shekawat farther back
+  shekawat  = { x:-100,   y:220, w:40, h:80 };
   obstacles = [];
   score     = 0;
   highScore = +localStorage.getItem("highScore")||0;
@@ -46,11 +47,12 @@ document.addEventListener("keyup", e=>{
 function spawn(){
   if(gameOver) return;
   // half size of character
-  let ow = pushpa.w/2, oh = pushpa.h/2;
+  let ow = pushpa.w/2 + 5;   // +5 for bigger
+  let oh = pushpa.h/2 + 10;  // +10 for bigger
   let type = Math.random()<0.5?"ground":"air";
   let y = type==="ground"
         ? groundY - oh
-        : groundY - oh - 100; 
+        : groundY - oh - 130;  // air ones higher
   obstacles.push({ x:canvas.width, y, w:ow, h:oh, type });
 }
 
@@ -77,7 +79,7 @@ function loop(){
   ctx.fillText("High: "+highScore,650,60);
 
   // Shekawat (red)
-  if(shekawat.x< pushpa.x - 50) shekawat.x += 0.7;
+  if(shekawat.x < pushpa.x - 80) shekawat.x += 0.7; // chase slower, start farther
   ctx.fillStyle="red";
   ctx.fillRect(shekawat.x, shekawat.y, shekawat.w, shekawat.h);
 
