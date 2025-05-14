@@ -20,16 +20,25 @@
       margin: auto;
       border: 2px solid #000;
     }
-    p {
-      font-size: 14px;
-      margin: 5px;
+    #retryBtn {
+      display: none;
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-family: monospace;
+      cursor: pointer;
+      background: #000;
+      color: white;
+      border: none;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
-  <h1> Dammunte Pattukoraa </h1>
-  <p>Press <strong>Space</strong> to jump, <strong>↓</strong> to duck. Avoid logs!</p>
+  <h1> Dammunte Pattukora </h1>
+  <p>Press <strong>Space</strong> to jump, <strong>↓</strong> to duck. Avoid logs and Shekawat!</p>
   <canvas id="game" width="800" height="300"></canvas>
+  <button id="retryBtn" onclick="restartGame()">🔁 Retry</button>
   <script src="game.js"></script>
 </body>
 </html>
