@@ -58,14 +58,14 @@ setInterval(spawnObstacle, 1800);
 function update() {
   if (gameOver) return;
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before redrawing
 
   // Move ground
   groundX -= gameSpeed;
   if (groundX <= -canvas.width) groundX = 0;
   ctx.fillStyle = "#ccc";
-  ctx.fillRect(groundX, 290, canvas.width, 10);
-  ctx.fillRect(groundX + canvas.width, 290, canvas.width, 10);
+  ctx.fillRect(groundX, 290, canvas.width, 10); // Ground
+  ctx.fillRect(groundX + canvas.width, 290, canvas.width, 10); // Continuously move ground
 
   // Score
   score++;
@@ -75,9 +75,9 @@ function update() {
   ctx.fillText("High: " + highScore, 650, 60);
 
   // Shekawat
-  if (shekawat.x < 30) shekawat.x += 0.5;
-  ctx.fillStyle = "red";
-  ctx.fillRect(shekawat.x, shekawat.y, shekawat.width, shekawat.height);  // Red rectangle for Shekawat
+  if (shekawat.x < 30) shekawat.x += 0.5; // Shekawat moves towards Pushpa
+  ctx.fillStyle = "red"; // Color Shekawat
+  ctx.fillRect(shekawat.x, shekawat.y, shekawat.width, shekawat.height);  // Shekawat's position
 
   // Pushpa
   pushpa.y += pushpa.vy;
@@ -87,13 +87,14 @@ function update() {
     pushpa.vy = 0;
     pushpa.jumping = false;
   }
-  ctx.fillStyle = "#000";
-  ctx.fillRect(pushpa.x, pushpa.y, pushpa.width, pushpa.height);  // Black rectangle for Pushpa
+  ctx.fillStyle = "#000"; // Color Pushpa
+  ctx.fillRect(pushpa.x, pushpa.y, pushpa.width, pushpa.height);  // Pushpa's position
 
   // Obstacles
   for (let i = 0; i < obstacles.length; i++) {
     let ob = obstacles[i];
     ob.x -= gameSpeed;
+    ctx.fillStyle = "#888"; // Color Obstacles
     ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
 
     // Collision
@@ -117,7 +118,7 @@ function update() {
     endGame("Shekawat");
   }
 
-  requestAnimationFrame(update);
+  requestAnimationFrame(update); // Continuous update
 }
 
 function endGame(reason) {
@@ -128,7 +129,7 @@ function endGame(reason) {
   ctx.fillStyle = "black";
   ctx.font = "24px monospace";
   ctx.fillText(`💀 Game Over (${reason})`, 300, 150);
-  retryBtn.style.display = "inline-block";
+  retryBtn.style.display = "inline-block"; // Show retry button
 }
 
 function restartGame() {
