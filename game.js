@@ -6,7 +6,7 @@ let pushpa, shekawat, obstacles, gravity, gameSpeed, score, highScore, gameOver,
 
 function initGame() {
   pushpa = { x: 50, y: 250, width: 20, height: 40, vy: 0, jumping: false, ducking: false };
-  shekawat = { x: 0, y: 260, width: 20, height: 40 };
+  shekawat = { x: 0, y: 260, width: 20, height: 40 }; // Shekawat position and size
   gravity = 1;
   obstacles = [];
   gameSpeed = 5;
@@ -77,7 +77,7 @@ function update() {
   // Shekawat
   if (shekawat.x < 30) shekawat.x += 0.5;
   ctx.fillStyle = "red";
-  ctx.fillRect(shekawat.x, shekawat.y, shekawat.width, shekawat.height);
+  ctx.fillRect(shekawat.x, shekawat.y, shekawat.width, shekawat.height);  // Red rectangle for Shekawat
 
   // Pushpa
   pushpa.y += pushpa.vy;
@@ -88,7 +88,7 @@ function update() {
     pushpa.jumping = false;
   }
   ctx.fillStyle = "#000";
-  ctx.fillRect(pushpa.x, pushpa.y, pushpa.width, pushpa.height);
+  ctx.fillRect(pushpa.x, pushpa.y, pushpa.width, pushpa.height);  // Black rectangle for Pushpa
 
   // Obstacles
   for (let i = 0; i < obstacles.length; i++) {
