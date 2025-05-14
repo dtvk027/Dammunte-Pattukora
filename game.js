@@ -1,140 +1,137 @@
 const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-const retryBtn = document.getElementById("retryBtn");
+const ctx    = canvas.getContext("2d");
+const retry  = document.getElementById("retryBtn");
 
-let pushpa, shekawat, obstacles, gravity, gameSpeed, score, highScore, gameOver, groundX;
+let pushpa, shekawat, obstacles, score, highScore, speed, gravity, groundY, gameOver, frame;
 
-function initGame() {
-  pushpa = { x: 50, y: 250, width: 20, height: 40, vy: 0, jumping: false, ducking: false };
-  shekawat = { x: 0, y: 260, width: 20, height: 40 }; // Shekawat position and size
-  gravity = 1;
+function init(){
+  // Character sizes
+  pushpa    = { x:50,  y:220, w:40, h:80, vy:0, jumping:false, ducking:false };
+  shekawat  = { x:0,   y:220, w:40, h:80 };
   obstacles = [];
-  gameSpeed = 5;
-  score = 0;
-  gameOver = false;
-  groundX = 0;
-  highScore = localStorage.getItem("highScore") || 0;
-  retryBtn.style.display = "none";
+  score     = 0;
+  highScore = +localStorage.getItem("highScore")||0;
+  speed     = 5;
+  gravity   = 1;
+  groundY   = canvas.height - 10;
+  gameOver  = false;
+  frame     = 0;
+  retry.style.display = "none";
 }
 
-initGame();
+init();
 
-document.addEventListener("keydown", (e) => {
-  if (e.code === "Space" && !pushpa.jumping && !pushpa.ducking && !gameOver) {
-    pushpa.vy = -15;
+// Controls
+document.addEventListener("keydown", e=>{
+  if(gameOver) return;
+  if(e.code==="Space" && !pushpa.jumping){
+    pushpa.vy = -20;
     pushpa.jumping = true;
   }
-  if (e.code === "ArrowDown" && !pushpa.jumping && !gameOver) {
-    pushpa.ducking = true;
-    pushpa.height = 20;
-    pushpa.y = 270;
+  if(e.code==="ArrowDown" && !pushpa.jumping){
+    pushpa.ducking=true;
+    pushpa.h=40;
+    pushpa.y=groundY - pushpa.h;
+  }
+});
+document.addEventListener("keyup", e=>{
+  if(e.code==="ArrowDown"){
+    pushpa.ducking=false;
+    pushpa.h=80;
+    pushpa.y=groundY - pushpa.h;
   }
 });
 
-document.addEventListener("keyup", (e) => {
-  if (e.code === "ArrowDown") {
-    pushpa.ducking = false;
-    pushpa.height = 40;
-    pushpa.y = 250;
-  }
-});
-
-function spawnObstacle() {
-  if (!gameOver) {
-    let type = Math.random() < 0.5 ? "ground" : "hanging";
-    let ob = {
-      x: canvas.width,
-      y: type === "ground" ? 270 : 180,
-      width: 20,
-      height: 30,
-      type
-    };
-    obstacles.push(ob);
-  }
+// Spawn obstacles
+function spawn(){
+  if(gameOver) return;
+  // half size of character
+  let ow = pushpa.w/2, oh = pushpa.h/2;
+  let type = Math.random()<0.5?"ground":"air";
+  let y = type==="ground"
+        ? groundY - oh
+        : groundY - oh - 100; 
+  obstacles.push({ x:canvas.width, y, w:ow, h:oh, type });
 }
 
-setInterval(spawnObstacle, 1800);
-
-function update() {
-  if (gameOver) return;
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before redrawing
+// Game loop
+function loop(){
+  if(gameOver) return;
+  frame++;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
   // Move ground
-  groundX -= gameSpeed;
-  if (groundX <= -canvas.width) groundX = 0;
-  ctx.fillStyle = "#ccc";
-  ctx.fillRect(groundX, 290, canvas.width, 10); // Ground
-  ctx.fillRect(groundX + canvas.width, 290, canvas.width, 10); // Continuously move ground
+  ctx.fillStyle="#ccc";
+  let gx = -(frame*speed)%canvas.width;
+  ctx.fillRect(gx, groundY, canvas.width, 10);
+  ctx.fillRect(gx+canvas.width, groundY, canvas.width, 10);
+
+  // Increase speed every 200 frames
+  if(frame%200===0) speed += 0.5;
 
   // Score
   score++;
-  ctx.fillStyle = "#000";
-  ctx.font = "20px monospace";
-  ctx.fillText("Score: " + score, 650, 30);
-  ctx.fillText("High: " + highScore, 650, 60);
+  ctx.fillStyle="#000";
+  ctx.font="20px monospace";
+  ctx.fillText("Score: "+score, 650,30);
+  ctx.fillText("High: "+highScore,650,60);
 
-  // Shekawat
-  if (shekawat.x < 30) shekawat.x += 0.5; // Shekawat moves towards Pushpa
-  ctx.fillStyle = "red"; // Color Shekawat
-  ctx.fillRect(shekawat.x, shekawat.y, shekawat.width, shekawat.height);  // Shekawat's position
+  // Shekawat (red)
+  if(shekawat.x< pushpa.x - 50) shekawat.x += 0.7;
+  ctx.fillStyle="red";
+  ctx.fillRect(shekawat.x, shekawat.y, shekawat.w, shekawat.h);
 
-  // Pushpa
+  // Pushpa (black)
   pushpa.y += pushpa.vy;
   pushpa.vy += gravity;
-  if (pushpa.y > (pushpa.ducking ? 270 : 250)) {
-    pushpa.y = pushpa.ducking ? 270 : 250;
+  if(pushpa.y > groundY - pushpa.h){
+    pushpa.y = groundY - pushpa.h;
     pushpa.vy = 0;
     pushpa.jumping = false;
   }
-  ctx.fillStyle = "#000"; // Color Pushpa
-  ctx.fillRect(pushpa.x, pushpa.y, pushpa.width, pushpa.height);  // Pushpa's position
+  ctx.fillStyle="#000";
+  ctx.fillRect(pushpa.x,pushpa.y,pushpa.w,pushpa.h);
 
   // Obstacles
-  for (let i = 0; i < obstacles.length; i++) {
-    let ob = obstacles[i];
-    ob.x -= gameSpeed;
-    ctx.fillStyle = "#888"; // Color Obstacles
-    ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
+  if(frame%120===0) spawn();
+  for(let i=0;i<obstacles.length;i++){
+    let o = obstacles[i];
+    o.x -= speed;
+    ctx.fillStyle="#555";
+    ctx.fillRect(o.x,o.y,o.w,o.h);
 
     // Collision
-    if (
-      pushpa.x < ob.x + ob.width &&
-      pushpa.x + pushpa.width > ob.x &&
-      pushpa.y < ob.y + ob.height &&
-      pushpa.y + pushpa.height > ob.y
-    ) {
-      endGame("Obstacle");
+    if(pushpa.x< o.x+o.w &&
+       pushpa.x+pushpa.w>o.x &&
+       pushpa.y< o.y+o.h &&
+       pushpa.y+pushpa.h>o.y){
+      end("Obstacle");
     }
   }
 
-  // Shekawat collision with Pushpa
-  if (
-    shekawat.x + shekawat.width > pushpa.x &&
-    shekawat.x < pushpa.x + pushpa.width &&
-    shekawat.y < pushpa.y + pushpa.height &&
-    shekawat.y + shekawat.height > pushpa.y
-  ) {
-    endGame("Shekawat");
+  // Shekawat collision
+  if(shekawat.x+shekawat.w > pushpa.x &&
+     shekawat.x < pushpa.x+pushpa.w){
+    end("Shekawat");
   }
 
-  requestAnimationFrame(update); // Continuous update
+  requestAnimationFrame(loop);
 }
 
-function endGame(reason) {
+function end(reason){
   gameOver = true;
-  if (score > highScore) {
-    localStorage.setItem("highScore", score);
+  if(score>highScore){
+    localStorage.setItem("highScore",score);
   }
-  ctx.fillStyle = "black";
-  ctx.font = "24px monospace";
-  ctx.fillText(`💀 Game Over (${reason})`, 300, 150);
-  retryBtn.style.display = "inline-block"; // Show retry button
+  ctx.fillStyle="#000";
+  ctx.font="24px monospace";
+  ctx.fillText(`💀 Game Over (${reason})`,300,150);
+  retry.style.display="block";
 }
 
-function restartGame() {
-  initGame();
-  update();
+function restartGame(){
+  init();
+  loop();
 }
 
-update();
+loop();
