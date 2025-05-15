@@ -10,13 +10,27 @@
       background: #f9f9f9;
       font-family: monospace;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
-    h1 { margin: 20px 0 5px; }
+    h1 { 
+      margin: 20px 0 5px; 
+      font-size: 24px;
+      color: #000;
+    }
+    p {
+      margin: 5px 0 10px;
+      font-size: 16px;
+      color: #333;
+    }
     canvas {
       background: #fff;
       display: block;
       margin: auto;
       border: 2px solid #000;
+      max-width: 100%;
     }
     #retryBtn {
       display: none;
@@ -29,11 +43,15 @@
       color: #fff;
       border: none;
       border-radius: 4px;
+      transition: background 0.2s;
+    }
+    #retryBtn:hover {
+      background: #333;
     }
   </style>
 </head>
 <body>
-  <h1> Dammunte Pattukora </h1>
+  <h1>Dammunte Pattukora</h1>
   <p>Space = Jump | ↓ = Duck | Avoid logs & Shekawat!</p>
   <canvas id="game" width="800" height="300"></canvas>
   <button id="retryBtn" onclick="restartGame()">🔁 Retry</button>
