@@ -7,22 +7,23 @@ const JUMP_STRENGTH = 15;
 let isJumping = false;
 let score = 0;
 let highScore = localStorage.getItem('highScore') ? parseInt(localStorage.getItem('highScore')) : 0;
-let gameSpeed = 5;
+let gameSpeed = 5; // initial speed
 let isGameOver = false;
 
 const retryBtn = document.getElementById('retryBtn');
 retryBtn.addEventListener('click', () => {
   obstacles = [];
   score = 0;
+  gameSpeed = 5;  // reset speed on retry
   isGameOver = false;
   retryBtn.style.display = 'none';
   pushpa.y = 200;
-  spawnObstacle(); // Start spawning again
+  spawnObstacle();
   gameLoop();
 });
 
 const pushpa = {
-  x: 50,
+  x: canvas.width / 4,  // roughly center-left horizontally
   y: 200,
   width: 40,
   height: 60,
@@ -68,13 +69,22 @@ let spawnTimeout;
 function spawnObstacle() {
   if (!isGameOver) {
     obstacles.push(new Obstacle());
-    // Spawn next obstacle between 1.2 and 2 seconds later
+
+    // Controlled random spacing for obstacles:
+    // 60% chance medium gap (1.3 - 1.5 sec)
+    // 40% chance far gap (1.8 - 2.2 sec)
+    let gap;
+    if (Math.random() < 0.6) {
+      gap = 1300 + Math.random() * 200;
+    } else {
+      gap = 1800 + Math.random() * 400;
+    }
+
     clearTimeout(spawnTimeout);
-    spawnTimeout = setTimeout(spawnObstacle, 1200 + Math.random() * 800);
+    spawnTimeout = setTimeout(spawnObstacle, gap);
   }
 }
 
-// Start spawning first obstacle
 spawnObstacle();
 
 function detectCollision(a, b) {
@@ -91,7 +101,7 @@ function gameLoop() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // background trees (minimalist)
+  // Background: forest feel (minimalist)
   ctx.fillStyle = '#ccc';
   ctx.fillRect(0, 220, canvas.width, 5);
   for (let i = 0; i < canvas.width; i += 80) {
@@ -105,7 +115,8 @@ function gameLoop() {
     if (detectCollision(pushpa, obs)) {
       isGameOver = true;
       retryBtn.style.display = 'block';
-      // Save high score on game over
+
+      // Save high score if beaten
       if (score > highScore) {
         highScore = score;
         localStorage.setItem('highScore', highScore);
@@ -117,11 +128,17 @@ function gameLoop() {
     }
   });
 
-  // Score display
+  // Increase speed gradually, max 12
+  if (gameSpeed < 12) {
+    gameSpeed += 0.002;
+  }
+
+  // Display scores top right
   ctx.fillStyle = 'black';
-  ctx.font = '20px monospace';
-  ctx.fillText('Score: ' + score, 650, 30);
-  ctx.fillText('High Score: ' + highScore, 650, 60);
+  ctx.font = '22px monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('Score: ' + score, canvas.width - 20, 40);
+  ctx.fillText('High Score: ' + highScore, canvas.width - 20, 70);
 
   requestAnimationFrame(gameLoop);
 }
