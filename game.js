@@ -6,12 +6,12 @@ let pushpa, shekawat, obstacles, score, highScore, speed, gravity, groundY, game
 
 function init() {
   pushpa = { x: 50, y: 220, w: 40, h: 80, vy: 0, jumping: false, ducking: false };
-  shekawat = { x: -50, y: 220, w: 40, h: 80 }; // Consistent with working Shekawat
+  shekawat = { x: 50, y: 220, w: 40, h: 80 }; // Start on-screen for visibility
   obstacles = [];
   score = 0;
   highScore = +localStorage.getItem("highScore") || 0;
   speed = 5;
-  gravity = 0.8;
+  gravity = 1.0; // Increased for faster fall
   groundY = canvas.height - 10;
   gameOver = false;
   gameStarted = false;
@@ -35,7 +35,7 @@ document.addEventListener("keydown", (e) => {
     return;
   }
   if (e.code === "Space" && !pushpa.jumping && gameStarted) {
-    pushpa.vy = -14; // Reduced jump velocity for lower jump
+    pushpa.vy = -12; // Further reduced for lower jump
     pushpa.jumping = true;
   }
   if (e.code === "ArrowDown" && !pushpa.jumping && gameStarted) {
@@ -93,13 +93,16 @@ function loop() {
   ctx.fillText("Score: " + score, 650, 30);
   ctx.fillText("High: " + highScore, 650, 60);
 
-  // Shekawat (red)
+  // Shekawat (red with black outline)
   if (shekawat.x < pushpa.x - 100) {
-    shekawat.x += Math.min(speed * 0.8, 3); // Preserved working speed
+    shekawat.x += Math.min(speed * 1.0, 4); // Increased speed for faster catch-up
   }
-  console.log("Shekawat x:", shekawat.x); // Debug to confirm Shekawat movement
+  console.log("Shekawat x:", shekawat.x); // Debug position
   ctx.fillStyle = "red";
   ctx.fillRect(shekawat.x, shekawat.y, shekawat.w, shekawat.h);
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(shekawat.x, shekawat.y, shekawat.w, shekawat.h);
 
   // Pushpa (black)
   pushpa.y += pushpa.vy;
@@ -113,7 +116,7 @@ function loop() {
   ctx.fillRect(pushpa.x, pushpa.y, pushpa.w, pushpa.h);
 
   // Obstacles
-  if (frame % 200 === 0) spawn();
+  if (frame % 250 === 0) spawn(); // Less frequent obstacles
   for (let i = obstacles.length - 1; i >= 0; i--) {
     let o = obstacles[i];
     o.x -= speed;
