@@ -67,23 +67,27 @@ let obstacles = [];
 let spawnTimeout;
 
 function spawnObstacle() {
-  if (!isGameOver) {
-    obstacles.push(new Obstacle());
+  if (isGameOver) return;
 
-    // Controlled random spacing for obstacles:
-    // 60% chance medium gap (1.3 - 1.5 sec)
-    // 40% chance far gap (1.8 - 2.2 sec)
-    let gap;
-    if (Math.random() < 0.6) {
-      gap = 1300 + Math.random() * 200;
-    } else {
-      gap = 1800 + Math.random() * 400;
-    }
+  obstacles.push(new Obstacle());
 
-    clearTimeout(spawnTimeout);
-    spawnTimeout = setTimeout(spawnObstacle, gap);
+  // Gap logic scaled with gameSpeed
+  let gap;
+  const baseSpeed = 5;
+  const speedFactor = gameSpeed / baseSpeed;
+
+  if (Math.random() < 0.6) {
+    // Medium gap (scaled down if game is faster)
+    gap = (1300 + Math.random() * 200) / speedFactor;
+  } else {
+    // Slightly farther gap (but not too far)
+    gap = (1600 + Math.random() * 300) / speedFactor;
   }
+
+  clearTimeout(spawnTimeout);
+  spawnTimeout = setTimeout(spawnObstacle, gap);
 }
+
 
 spawnObstacle();
 
