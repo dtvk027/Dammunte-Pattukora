@@ -6,9 +6,23 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  flex-direction: column;
+  font-family: monospace;
 }
 
 canvas {
   border: 1px solid #000;
   background-color: #fff;
+}
+
+#retryBtn {
+  display: none;
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
