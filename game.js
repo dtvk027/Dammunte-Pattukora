@@ -4,6 +4,7 @@ canvas.width = 800;
 canvas.height = 300;
 
 let gameState = 'start'; // 'start', 'playing', 'gameOver'
+let lastKeyPress = 0; // Prevent rapid keypresses
 
 const pushpa = {
     x: 50,
@@ -17,11 +18,11 @@ const pushpa = {
 };
 
 const shekawat = {
-    x: -50, // Start off-screen to the left
+    x: -50,
     y: canvas.height - 60,
     width: 40,
     height: 60,
-    speed: 3, // Slower than Pushpa
+    speed: 3,
 };
 
 let obstacles = [];
@@ -52,17 +53,16 @@ function gameLoop() {
 function drawStart() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#ccc';
-    ctx.fillRect(0, canvas.height - 20, canvas.width, 20); // Ground
+    ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
     ctx.fillStyle = 'black';
-    ctx.fillRect(pushpa.x, pushpa.y, pushpa.width, pushpa.height); // Pushpa
+    ctx.fillRect(pushpa.x, pushpa.y, pushpa.width, pushpa.height);
     ctx.fillStyle = 'red';
-    ctx.fillRect(shekawat.x, shekawat.y, shekawat.width, shekawat.height); // Shekawat
+    ctx.fillRect(shekawat.x, shekawat.y, shekawat.width, shekawat.height);
     document.getElementById('startMessage').classList.remove('hidden');
     document.getElementById('gameOverMessage').classList.add('hidden');
 }
 
 function updatePlaying() {
-    // Update Pushpa's position and state
     pushpa.x += pushpa.speed;
     if (pushpa.jumping) {
         pushpa.dy += gravity;
@@ -75,21 +75,17 @@ function updatePlaying() {
     }
     pushpa.height = pushpa.ducking ? 30 : 60;
 
-    // Update Shekawat's position (hidden during gameplay)
     shekawat.x += shekawat.speed;
 
-    // Spawn obstacles
     if (Math.random() < 0.02) {
         const type = Math.random() < 0.5 ? 'ground' : 'air';
         const obstacle = { ...obstacleTypes.find(t => t.type === type), x: canvas.width };
         obstacles.push(obstacle);
     }
 
-    // Update obstacles
     obstacles.forEach(obstacle => obstacle.x -= pushpa.speed);
     obstacles = obstacles.filter(obstacle => obstacle.x + obstacle.width > 0);
 
-    // Check collisions
     for (const obstacle of obstacles) {
         if (
             pushpa.x < obstacle.x + obstacle.width &&
@@ -102,18 +98,17 @@ function updatePlaying() {
         }
     }
 
-    // Update score
     score += 1;
 }
 
 function drawPlaying() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#ccc';
-    ctx.fillRect(0, canvas.height - 20, canvas.width, 20); // Ground
+    ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
     ctx.fillStyle = 'black';
-    ctx.fillRect(pushpa.x, pushpa.y, pushpa.width, pushpa.height); // Pushpa
+    ctx.fillRect(pushpa.x, pushpa.y, pushpa.width, pushpa.height);
     ctx.fillStyle = 'gray';
-    obstacles.forEach(obstacle => ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height)); // Obstacles
+    obstacles.forEach(obstacle => ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height));
     ctx.fillStyle = 'black';
     ctx.font = '20px monospace';
     ctx.fillText(`Score: ${score}`, 10, 30);
@@ -121,7 +116,6 @@ function drawPlaying() {
 }
 
 function updateGameOver() {
-    // Shekawat catches up to Pushpa
     if (shekawat.x < pushpa.x) {
         shekawat.x += shekawat.speed;
     } else {
@@ -136,25 +130,33 @@ function updateGameOver() {
 function drawGameOver() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#ccc';
-    ctx.fillRect(0, canvas.height - 20, canvas.width, 20); // Ground
+    ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
     ctx.fillStyle = 'black';
-    ctx.fillRect(pushpa.x, pushpa.y, pushpa.width, pushpa.height); // Pushpa
+    ctx.fillRect(pushpa.x, pushpa.y, pushpa.width, pushpa.height);
     ctx.fillStyle = 'red';
-    ctx.fillRect(shekawat.x, shekawat.y, shekawat.width, shekawat.height); // Shekawat
+    ctx.fillRect(shekawat.x, shekawat.y, shekawat.width, shekawat.height);
     ctx.fillStyle = 'gray';
-    obstacles.forEach(obstacle => ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height)); // Obstacles
+    obstacles.forEach(obstacle => ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height));
 }
 
 document.addEventListener('keydown', (e) => {
+    const now = Date.now();
+    if (now - lastKeyPress < 200) return; // Debounce keypresses
+    lastKeyPress = now;
+
     if (e.code === 'Space') {
+        console.log('Spacebar pressed, state:', gameState);
         if (gameState === 'start') {
+            console.log('Starting game');
             gameState = 'playing';
             document.getElementById('startMessage').classList.add('hidden');
             resetGame();
         } else if (gameState === 'gameOver') {
+            console.log('Restarting game');
             gameState = 'start';
             document.getElementById('gameOverMessage').classList.add('hidden');
         } else if (gameState === 'playing' && !pushpa.jumping) {
+            console.log('Jumping');
             pushpa.dy = jumpPower;
             pushpa.jumping = true;
         }
@@ -170,6 +172,7 @@ document.addEventListener('keyup', (e) => {
 });
 
 function resetGame() {
+    console.log('Resetting game');
     pushpa.x = 50;
     pushpa.y = canvas.height - 60;
     pushpa.dy = 0;
@@ -180,4 +183,5 @@ function resetGame() {
     score = 0;
 }
 
+// Start the game loop
 gameLoop();
