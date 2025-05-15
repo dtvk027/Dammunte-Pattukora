@@ -1,3 +1,14 @@
+const pushpaImg = new Image();
+pushpaImg.src = 'pushpa.png';
+
+const logSmallImg = new Image();
+logSmallImg.src = 'woodlog1.png';
+
+const logMediumImg = new Image();
+logMediumImg.src = 'woodlog2.png';
+
+
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
