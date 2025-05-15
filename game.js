@@ -1,4 +1,3 @@
-// game.js
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -7,19 +6,18 @@ const JUMP_STRENGTH = 15;
 
 let isJumping = false;
 let score = 0;
+let highScore = localStorage.getItem('highScore') ? parseInt(localStorage.getItem('highScore')) : 0;
 let gameSpeed = 5;
 let isGameOver = false;
 
-const retryBtn = document.createElement('button');
-retryBtn.id = 'retryBtn';
-retryBtn.innerText = 'Retry';
-document.body.appendChild(retryBtn);
+const retryBtn = document.getElementById('retryBtn');
 retryBtn.addEventListener('click', () => {
   obstacles = [];
   score = 0;
   isGameOver = false;
   retryBtn.style.display = 'none';
   pushpa.y = 200;
+  spawnObstacle(); // Start spawning again
   gameLoop();
 });
 
@@ -65,10 +63,19 @@ class Obstacle {
 }
 
 let obstacles = [];
+let spawnTimeout;
+
 function spawnObstacle() {
-  if (!isGameOver) obstacles.push(new Obstacle());
+  if (!isGameOver) {
+    obstacles.push(new Obstacle());
+    // Spawn next obstacle between 1.2 and 2 seconds later
+    clearTimeout(spawnTimeout);
+    spawnTimeout = setTimeout(spawnObstacle, 1200 + Math.random() * 800);
+  }
 }
-setInterval(spawnObstacle, 1500);
+
+// Start spawning first obstacle
+spawnObstacle();
 
 function detectCollision(a, b) {
   return (
@@ -98,6 +105,11 @@ function gameLoop() {
     if (detectCollision(pushpa, obs)) {
       isGameOver = true;
       retryBtn.style.display = 'block';
+      // Save high score on game over
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('highScore', highScore);
+      }
     }
     if (obs.x + obs.width < 0) {
       obstacles.splice(index, 1);
@@ -105,10 +117,11 @@ function gameLoop() {
     }
   });
 
-  // Score
+  // Score display
   ctx.fillStyle = 'black';
   ctx.font = '20px monospace';
   ctx.fillText('Score: ' + score, 650, 30);
+  ctx.fillText('High Score: ' + highScore, 650, 60);
 
   requestAnimationFrame(gameLoop);
 }
