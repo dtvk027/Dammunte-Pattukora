@@ -1,11 +1,11 @@
 /* style.css */
-body {
+html, body {
+  height: 100%;
   margin: 0;
   background-color: #fff;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  justify-content: center; /* centers horizontally */
+  align-items: center;     /* centers vertically */
   flex-direction: column;
   font-family: monospace;
 }
@@ -13,6 +13,7 @@ body {
 canvas {
   border: 1px solid #000;
   background-color: #fff;
+  display: block; /* removes any inline spacing */
 }
 
 #retryBtn {
@@ -25,4 +26,5 @@ canvas {
   border: none;
   cursor: pointer;
   border-radius: 5px;
+  align-self: center; /* makes sure button stays centered */
 }
