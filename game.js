@@ -8,6 +8,20 @@ const JUMP_STRENGTH = 15;
 let isJumping = false;
 let score = 0;
 let gameSpeed = 5;
+let isGameOver = false;
+
+const retryBtn = document.createElement('button');
+retryBtn.id = 'retryBtn';
+retryBtn.innerText = 'Retry';
+document.body.appendChild(retryBtn);
+retryBtn.addEventListener('click', () => {
+  obstacles = [];
+  score = 0;
+  isGameOver = false;
+  retryBtn.style.display = 'none';
+  pushpa.y = 200;
+  gameLoop();
+});
 
 const pushpa = {
   x: 50,
@@ -52,7 +66,7 @@ class Obstacle {
 
 let obstacles = [];
 function spawnObstacle() {
-  obstacles.push(new Obstacle());
+  if (!isGameOver) obstacles.push(new Obstacle());
 }
 setInterval(spawnObstacle, 1500);
 
@@ -66,6 +80,8 @@ function detectCollision(a, b) {
 }
 
 function gameLoop() {
+  if (isGameOver) return;
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // background trees (minimalist)
@@ -80,8 +96,8 @@ function gameLoop() {
   obstacles.forEach((obs, index) => {
     obs.update();
     if (detectCollision(pushpa, obs)) {
-      alert('Game Over! Score: ' + score);
-      document.location.reload();
+      isGameOver = true;
+      retryBtn.style.display = 'block';
     }
     if (obs.x + obs.width < 0) {
       obstacles.splice(index, 1);
@@ -100,7 +116,7 @@ function gameLoop() {
 gameLoop();
 
 window.addEventListener('keydown', (e) => {
-  if (e.code === 'Space' && !isJumping) {
+  if (e.code === 'Space' && !isJumping && !isGameOver) {
     isJumping = true;
     pushpa.yVelocity = JUMP_STRENGTH;
   }
