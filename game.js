@@ -6,12 +6,12 @@ let pushpa, shekawat, obstacles, score, highScore, speed, gravity, groundY, game
 
 function init() {
   pushpa = { x: 50, y: 220, w: 40, h: 80, vy: 0, jumping: false, ducking: false };
-  shekawat = { x: -200, y: 220, w: 40, h: 80 }; // Start Shekawat further back
+  shekawat = { x: -50, y: 220, w: 40, h: 80 }; // Consistent with working Shekawat
   obstacles = [];
   score = 0;
   highScore = +localStorage.getItem("highScore") || 0;
   speed = 5;
-  gravity = 0.8; // Slightly reduced gravity for smoother jumps
+  gravity = 0.8;
   groundY = canvas.height - 10;
   gameOver = false;
   gameStarted = false;
@@ -35,7 +35,7 @@ document.addEventListener("keydown", (e) => {
     return;
   }
   if (e.code === "Space" && !pushpa.jumping && gameStarted) {
-    pushpa.vy = -18; // Adjusted jump strength
+    pushpa.vy = -14; // Reduced jump velocity for lower jump
     pushpa.jumping = true;
   }
   if (e.code === "ArrowDown" && !pushpa.jumping && gameStarted) {
@@ -59,7 +59,7 @@ function spawn() {
   let ow = pushpa.w / 2 + 5;
   let oh = pushpa.h / 2 + 10;
   let type = Math.random() < 0.5 ? "ground" : "air";
-  let y = type === "ground" ? groundY - oh : groundY - oh - 100; // Adjusted air obstacle height
+  let y = type === "ground" ? groundY - oh : groundY - oh - 100;
   obstacles.push({ x: canvas.width, y, w: ow, h: oh, type });
 }
 
@@ -87,7 +87,7 @@ function loop() {
   if (frame % 500 === 0) speed += 0.3;
 
   // Score
-  if (frame % 10 === 0) score++; // Slower score increment
+  if (frame % 10 === 0) score++;
   ctx.fillStyle = "#000";
   ctx.font = "20px monospace";
   ctx.fillText("Score: " + score, 650, 30);
@@ -95,8 +95,9 @@ function loop() {
 
   // Shekawat (red)
   if (shekawat.x < pushpa.x - 100) {
-    shekawat.x += Math.min(speed * 0.6, 2); // Slower chase, capped speed
+    shekawat.x += Math.min(speed * 0.8, 3); // Preserved working speed
   }
+  console.log("Shekawat x:", shekawat.x); // Debug to confirm Shekawat movement
   ctx.fillStyle = "red";
   ctx.fillRect(shekawat.x, shekawat.y, shekawat.w, shekawat.h);
 
@@ -112,7 +113,7 @@ function loop() {
   ctx.fillRect(pushpa.x, pushpa.y, pushpa.w, pushpa.h);
 
   // Obstacles
-  if (frame % 150 === 0) spawn(); // Slower spawn rate
+  if (frame % 200 === 0) spawn();
   for (let i = obstacles.length - 1; i >= 0; i--) {
     let o = obstacles[i];
     o.x -= speed;
