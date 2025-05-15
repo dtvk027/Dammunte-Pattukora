@@ -1,3 +1,4 @@
+// Load images
 const pushpaImg = new Image();
 pushpaImg.src = 'pushpa.png';
 
@@ -7,8 +8,7 @@ logSmallImg.src = 'woodlog1.png';
 const logMediumImg = new Image();
 logMediumImg.src = 'woodlog2.png';
 
-
-
+// Setup canvas
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -18,14 +18,14 @@ const JUMP_STRENGTH = 15;
 let isJumping = false;
 let score = 0;
 let highScore = localStorage.getItem('highScore') ? parseInt(localStorage.getItem('highScore')) : 0;
-let gameSpeed = 5; // initial speed
+let gameSpeed = 5;
 let isGameOver = false;
 
 const retryBtn = document.getElementById('retryBtn');
 retryBtn.addEventListener('click', () => {
   obstacles = [];
   score = 0;
-  gameSpeed = 5;  // reset speed on retry
+  gameSpeed = 5;
   isGameOver = false;
   retryBtn.style.display = 'none';
   pushpa.y = 200;
@@ -33,15 +33,15 @@ retryBtn.addEventListener('click', () => {
   gameLoop();
 });
 
+// Player (Pushpa)
 const pushpa = {
-  x: canvas.width / 4,  // roughly center-left horizontally
+  x: canvas.width / 4,
   y: 200,
   width: 40,
   height: 60,
   yVelocity: 0,
   draw() {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.drawImage(pushpaImg, this.x, this.y, this.width, this.height);
   },
   update() {
     if (isJumping) {
@@ -57,17 +57,28 @@ const pushpa = {
   },
 };
 
+// Obstacle class (randomly picks small or medium log)
 class Obstacle {
   constructor() {
     this.x = canvas.width;
     this.y = 240;
-    this.width = 30 + Math.random() * 20;
-    this.height = 40;
+
+    // Randomly pick type
+    if (Math.random() < 0.5) {
+      this.width = 40;
+      this.height = 40;
+      this.image = logSmallImg;
+    } else {
+      this.width = 60;
+      this.height = 50;
+      this.image = logMediumImg;
+    }
   }
+
   draw() {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
   }
+
   update() {
     this.x -= gameSpeed;
     this.draw();
@@ -82,23 +93,20 @@ function spawnObstacle() {
 
   obstacles.push(new Obstacle());
 
-  // Gap logic scaled with gameSpeed
-  let gap;
+  // Gap logic scaled with game speed
   const baseSpeed = 5;
   const speedFactor = gameSpeed / baseSpeed;
+  let gap;
 
   if (Math.random() < 0.6) {
-    // Medium gap (scaled down if game is faster)
     gap = (1300 + Math.random() * 200) / speedFactor;
   } else {
-    // Slightly farther gap (but not too far)
     gap = (1600 + Math.random() * 300) / speedFactor;
   }
 
   clearTimeout(spawnTimeout);
   spawnTimeout = setTimeout(spawnObstacle, gap);
 }
-
 
 spawnObstacle();
 
@@ -116,7 +124,7 @@ function gameLoop() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Background: forest feel (minimalist)
+  // Minimalist forest-like background
   ctx.fillStyle = '#ccc';
   ctx.fillRect(0, 220, canvas.width, 5);
   for (let i = 0; i < canvas.width; i += 80) {
@@ -130,25 +138,23 @@ function gameLoop() {
     if (detectCollision(pushpa, obs)) {
       isGameOver = true;
       retryBtn.style.display = 'block';
-
-      // Save high score if beaten
       if (score > highScore) {
         highScore = score;
         localStorage.setItem('highScore', highScore);
       }
     }
+
     if (obs.x + obs.width < 0) {
       obstacles.splice(index, 1);
       score++;
     }
   });
 
-  // Increase speed gradually, max 12
   if (gameSpeed < 12) {
     gameSpeed += 0.002;
   }
 
-  // Display scores top right
+  // Score display
   ctx.fillStyle = 'black';
   ctx.font = '22px monospace';
   ctx.textAlign = 'right';
