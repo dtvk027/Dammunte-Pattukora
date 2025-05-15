@@ -1,13 +1,15 @@
 // Load images
 const pushpaImg = new Image();
 pushpaImg.src = 'pushpa.png';
+pushpaImg.onload = () => console.log('Pushpa image loaded.');
 
 const logSmallImg = new Image();
 logSmallImg.src = 'woodlog1.png';
+logSmallImg.onload = () => console.log('Small log image loaded.');
 
 const logMediumImg = new Image();
 logMediumImg.src = 'woodlog2.png';
-
+logMediumImg.onload = () => console.log('Medium log image loaded.');
 // Setup canvas
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
