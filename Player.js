@@ -23,7 +23,7 @@ export default class Player {
     this.yStandingPosition = this.y;
 
     this.standingStillImage = new Image();
-    this.standingStillImage.src = "images/standing_still.png";
+    this.standingStillImage.src = "images/dino_run1.png";
     this.image = this.standingStillImage;
 
     const dinoRunImage1 = new Image();
