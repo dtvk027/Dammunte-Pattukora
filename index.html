@@ -1,68 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pushpa: Dammunte Pattukora</title>
+  <meta name="description" content="Play Pushpa: Dammunte Pattukora - an action-packed jump game. Dammunte pattukora!">
+  <meta name="theme-color" content="#ff4500">
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+
   <style>
-    body {
+    * {
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      font-family: 'Arial', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2b2b2b 100%);
-      font-family: 'Arial', sans-serif;
       overflow: hidden;
-      color: white;
+      touch-action: manipulation;
+      color: #fff;
     }
 
     .game-container {
-      background: #222;
-      border-radius: 15px;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-      padding: 25px;
-      text-align: center;
-      border: 2px solid #ff4500;
+      position: relative;
+      width: 800px;
+      background: #111;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+      border: 3px solid #ff4500;
+      max-width: 95vw;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .score-display {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ff4500;
+      text-shadow: 0 0 8px rgba(255,69,0,0.7);
     }
 
     .game-title {
+      text-align: center;
       font-size: 2rem;
       font-weight: bold;
       margin-bottom: 15px;
       color: #ff4500;
-      text-shadow: 0 0 10px rgba(255,69,0,0.5);
+      text-shadow: 0 0 15px rgba(255,69,0,0.6);
+      letter-spacing: 1px;
     }
 
     canvas {
       display: block;
-      background: #111;
+      width: 100%;
+      height: auto;
+      background: #000;
       border: 2px solid #333;
       border-radius: 8px;
-      margin: 0 auto;
-    }
-
-    .game-footer {
-      margin-top: 15px;
-      font-size: 0.9rem;
-      color: #888;
     }
 
     .controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #bbb;
+    }
+
+    .game-footer {
+      text-align: center;
       margin-top: 10px;
       font-size: 0.8rem;
-      color: #aaa;
+      color: #666;
+    }
+
+    @media (max-width: 500px) {
+      .game-title {
+        font-size: 1.4rem;
+      }
+
+      .score-display {
+        font-size: 1.2rem;
+      }
+
+      .controls {
+        font-size: 0.75rem;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="game-container">
+    <div class="game-header">
+      <div class="score-display">HI <span id="high-score">000000</span></div>
+      <div class="score-display"><span id="current-score">000000</span></div>
+    </div>
+
     <div class="game-title">🔥 PUSHPA: DAMMUNTE PATTUKORA 🔥</div>
-    <canvas id="game" width="800" height="200"></canvas>
-    <div class="controls">SPACE to Jump | TOUCH/TAP to Jump</div>
+
+    <canvas id="game" width="800" height="200">
+      Your browser does not support the game canvas. Please update your browser.
+    </canvas>
+
+    <div class="controls">
+      <div>Press <strong>SPACE</strong> to Jump</div>
+      <div><strong>Touch / Tap</strong> to Jump</div>
+    </div>
+
     <div class="game-footer">© D.Tvk | All Rights Reserved</div>
   </div>
+
+  <!-- Main game logic -->
   <script src="index.js" type="module"></script>
+
+  <!-- Score updater function -->
+  <script>
+    // This gets called from Score.js (if wired properly)
+    window.updateScoreDisplay = function(score, highScore) {
+      document.getElementById("current-score").textContent = String(score).padStart(6, "0");
+      document.getElementById("high-score").textContent = String(highScore).padStart(6, "0");
+    };
+  </script>
 </body>
 </html>
