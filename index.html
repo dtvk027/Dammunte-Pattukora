@@ -12,47 +12,57 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2b2b2b 100%);
+      font-family: 'Arial', sans-serif;
       overflow: hidden;
+      color: white;
     }
 
     .game-container {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      padding: 20px;
+      background: #222;
+      border-radius: 15px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+      padding: 25px;
       text-align: center;
+      border: 2px solid #ff4500;
     }
 
     .game-title {
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: bold;
       margin-bottom: 15px;
       color: #ff4500;
+      text-shadow: 0 0 10px rgba(255,69,0,0.5);
     }
 
     canvas {
       display: block;
-      background: #fafafa;
-      border: 1px solid #ddd;
+      background: #111;
+      border: 2px solid #333;
       border-radius: 8px;
+      margin: 0 auto;
     }
 
     .game-footer {
       margin-top: 15px;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .controls {
+      margin-top: 10px;
       font-size: 0.8rem;
-      color: #666;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
   <div class="game-container">
-    <div class="game-title">🔥 Pushpa: Dammunte Pattukora</div>
+    <div class="game-title">🔥 PUSHPA: DAMMUNTE PATTUKORA 🔥</div>
     <canvas id="game" width="800" height="200"></canvas>
-    <div class="game-footer">Press SPACE to jump | Made by D.Tvk</div>
+    <div class="controls">SPACE to Jump | TOUCH/TAP to Jump</div>
+    <div class="game-footer">© D.Tvk | All Rights Reserved</div>
   </div>
   <script src="index.js" type="module"></script>
 </body>
 </html>
-
