@@ -10,33 +10,30 @@ export default class Score {
 
   update(frameTimeDelta) {
     this.score += frameTimeDelta * 0.01;
+    this.updateDOMScore(); // Sync every frame
   }
 
   reset() {
     this.score = 0;
+    this.updateDOMScore(); // Reset DOM too
   }
 
   setHighScore() {
     const highScore = Number(localStorage.getItem(this.HIGH_SCORE_KEY));
     if (this.score > highScore) {
       localStorage.setItem(this.HIGH_SCORE_KEY, Math.floor(this.score));
+      this.updateDOMScore(); // Also sync DOM
     }
   }
 
-  draw() {
-    const highScore = Number(localStorage.getItem(this.HIGH_SCORE_KEY));
-    const y = 20 * this.scaleRatio;
+  updateDOMScore() {
+    const current = Math.floor(this.score);
+    const high = Number(localStorage.getItem(this.HIGH_SCORE_KEY)) || 0;
 
-    const fontSize = 20 * this.scaleRatio;
-    this.ctx.font = `${fontSize}px serif`;
-    this.ctx.fillStyle = "#525250";
-    const scoreX = this.canvas.width - 75 * this.scaleRatio;
-    const highScoreX = scoreX - 125 * this.scaleRatio;
-
-    const scorePadded = Math.floor(this.score).toString().padStart(6, 0);
-    const highScorePadded = highScore.toString().padStart(6, 0);
-
-    this.ctx.fillText(scorePadded, scoreX, y);
-    this.ctx.fillText(`HI ${highScorePadded}`, highScoreX, y);
+    if (typeof window !== "undefined" && window.updateScoreDisplay) {
+      window.updateScoreDisplay(current, high);
+    }
   }
+
+  // Removed draw() method since it's no longer needed
 }
