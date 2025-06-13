@@ -186,3 +186,12 @@ window.addEventListener("touchstart", reset, { once: true });
 // ===================
 setScreen();
 requestAnimationFrame(gameLoop);
+
+window.updateScoreDisplay = function (current, high) {
+  const highScoreEl = document.getElementById("highScore");
+  const currentScoreEl = document.getElementById("currentScore");
+
+  if (highScoreEl) highScoreEl.innerText = `HI ${String(high).padStart(6, '0')}`;
+  if (currentScoreEl) currentScoreEl.innerText = String(current).padStart(6, '0');
+};
+
