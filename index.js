@@ -115,7 +115,7 @@ function gameLoop(currentTime) {
     ground.draw();
     cactiController.draw();
     player.draw();
-    score.draw();
+    ;
 
     if (gameOver) showGameOver();
     if (waitingToStart) showStartGameText();
