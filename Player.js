@@ -1,5 +1,5 @@
 export default class Player {
-  WALK_ANIMATION_TIMER = 200;
+  WALK_ANIMATION_TIMER = 100;
   walkAnimationTimer = this.WALK_ANIMATION_TIMER;
   dinoRunImages = [];
 
