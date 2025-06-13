@@ -188,10 +188,10 @@ setScreen();
 requestAnimationFrame(gameLoop);
 
 window.updateScoreDisplay = function (current, high) {
-  const highScoreEl = document.getElementById("highScore");
-  const currentScoreEl = document.getElementById("currentScore");
+  const highScoreEl = document.getElementById("high-score");
+  const currentScoreEl = document.getElementById("current-score");
 
-  if (highScoreEl) highScoreEl.innerText = `HI ${String(high).padStart(6, '0')}`;
+  if (highScoreEl) highScoreEl.innerText = String(high).padStart(6, '0');
   if (currentScoreEl) currentScoreEl.innerText = String(current).padStart(6, '0');
 };
 
