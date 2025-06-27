@@ -2,6 +2,7 @@ import Player from "./Player.js";
 import Ground from "./Ground.js";
 import CactiController from "./CactiController.js";
 import Score from "./Score.js";
+import Background from "./Background.js"; // <-- NEW IMPORT
 
 // Canvas Setup
 const canvas = document.getElementById("game");
@@ -20,6 +21,11 @@ const GROUND_AND_CACTUS_SPEED = 0.5;
 const GAME_SPEED_START = 1.0;
 const GAME_SPEED_INCREMENT = 0.00001;
 
+const BACKGROUND_CONFIG = {
+  image: "images/jungle_bg_1600x400.png", // <-- Your background image path
+  speed: 0.15 // Parallax speed
+};
+
 const CACTI_CONFIG = [
     { width: 65 / 1.5, height: 90 / 1.5, image: "images/cactus_1.png" },
     { width: 85 / 1.5, height: 85 / 1.5, image: "images/cactus_2.png" },
@@ -27,7 +33,7 @@ const CACTI_CONFIG = [
 ];
 
 // Game Variables
-let player, ground, cactiController, score;
+let player, ground, cactiController, score, background;
 let scaleRatio;
 let previousTime = null;
 let gameSpeed = GAME_SPEED_START;
@@ -45,6 +51,15 @@ function createSprites() {
     const maxJumpHeightInGame = MAX_JUMP_HEIGHT * scaleRatio;
     const groundWidthInGame = GROUND_WIDTH * scaleRatio;
     const groundHeightInGame = GROUND_HEIGHT * scaleRatio;
+
+    background = new Background( // <-- NEW BACKGROUND INIT
+        ctx,
+        BACKGROUND_CONFIG.image,
+        GAME_WIDTH,
+        GAME_HEIGHT,
+        BACKGROUND_CONFIG.speed,
+        scaleRatio
+    );
 
     player = new Player(ctx, playerWidthInGame, playerHeightInGame, minJumpHeightInGame, maxJumpHeightInGame, scaleRatio);
     ground = new Ground(ctx, groundWidthInGame, groundHeightInGame, GROUND_AND_CACTUS_SPEED, scaleRatio);
@@ -98,6 +113,7 @@ function gameLoop(currentTime) {
     clearScreen();
 
     if (!gameOver && !waitingToStart) {
+        background.update(gameSpeed, frameTimeDelta); // <-- UPDATE BACKGROUND
         ground.update(gameSpeed, frameTimeDelta);
         cactiController.update(gameSpeed, frameTimeDelta);
         player.update(gameSpeed, frameTimeDelta);
@@ -112,10 +128,10 @@ function gameLoop(currentTime) {
     }
 
     // Draw game elements
+    background.draw(); // <-- DRAW BACKGROUND FIRST
     ground.draw();
     cactiController.draw();
     player.draw();
-    ;
 
     if (gameOver) showGameOver();
     if (waitingToStart) showStartGameText();
@@ -194,4 +210,3 @@ window.updateScoreDisplay = function (current, high) {
   if (highScoreEl) highScoreEl.innerText = String(high).padStart(6, '0');
   if (currentScoreEl) currentScoreEl.innerText = String(current).padStart(6, '0');
 };
-
