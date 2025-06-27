@@ -143,10 +143,10 @@ function gameLoop(currentTime) {
 // Utility Functions
 // ===================
 function clearScreen() {
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Dark green fallback (shows while background loads)
+  ctx.fillStyle = "#0a1a0a";  // Deep jungle green
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
-
 function showStartGameText() {
     const fontSize = 40 * scaleRatio;
     ctx.font = `${fontSize}px Verdana`;
