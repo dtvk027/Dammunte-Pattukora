@@ -22,7 +22,7 @@ const GAME_SPEED_START = 1.0;
 const GAME_SPEED_INCREMENT = 0.00001;
 
 const BACKGROUND_CONFIG = {
-  image: "images/jungle_bg_1600x400.png", // <-- Your background image path
+  image: "images/bg.png", // <-- Your background image path
   speed: 0.15 // Parallax speed
 };
 
