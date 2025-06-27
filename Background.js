@@ -4,24 +4,23 @@ export default class Background {
     this.image = new Image();
     this.image.src = imagePath;
     this.loaded = false;
-    
-    // Game dimensions
-    this.gameWidth = gameWidth;
+
+    // Game dimensions (800x200)
+    this.gameWidth = gameWidth; 
     this.gameHeight = gameHeight;
     this.speed = speed;
     this.scaleRatio = scaleRatio;
-    
-    // Positioning for infinite scroll
+
+    // Positions for infinite scroll
     this.x = 0;
-    this.x2 = gameWidth; // Second image starts exactly after first
-    
-    // Set up image loading
+    this.x2 = gameWidth;
+
     this.image.onload = () => {
       this.loaded = true;
-      // Calculate dimensions to maintain aspect ratio
-      this.aspectRatio = this.image.width / this.image.height;
-      this.renderHeight = gameHeight;
-      this.renderWidth = this.renderHeight * this.aspectRatio;
+      // Calculate scaling to perfectly fit canvas height while maintaining aspect ratio
+      this.scale = gameHeight / this.image.height; // 200/400 = 0.5
+      this.renderWidth = this.image.width * this.scale; // 1600*0.5 = 800
+      this.renderHeight = gameHeight; // 200
     };
   }
 
@@ -32,7 +31,6 @@ export default class Background {
     this.x -= movement;
     this.x2 -= movement;
     
-    // Reset positions when scrolled completely
     if (this.x <= -this.renderWidth) this.x = this.renderWidth;
     if (this.x2 <= -this.renderWidth) this.x2 = this.renderWidth;
   }
@@ -40,17 +38,17 @@ export default class Background {
   draw() {
     if (!this.loaded) return;
     
-    // Draw two copies side-by-side for seamless looping
+    // Draw perfectly scaled background
     this.ctx.drawImage(
       this.image,
-      this.x, 0, 
-      this.renderWidth, this.renderHeight
+      0, 0, this.image.width, this.image.height, // Source dimensions (full image)
+      this.x, 0, this.renderWidth, this.renderHeight // Canvas dimensions (scaled down)
     );
     
     this.ctx.drawImage(
       this.image,
-      this.x2, 0,
-      this.renderWidth, this.renderHeight
+      0, 0, this.image.width, this.image.height,
+      this.x2, 0, this.renderWidth, this.renderHeight
     );
   }
 
