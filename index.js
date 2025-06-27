@@ -21,8 +21,8 @@ const GAME_SPEED_START = 1.0;
 const GAME_SPEED_INCREMENT = 0.00001;
 
 const CACTI_CONFIG = [
-    { width: 55 / 1.5, height: 90 / 1.5, image: "images/cactus_1.png" },
-    { width: 80 / 1.5, height: 85 / 1.5, image: "images/cactus_2.png" },
+    { width: 65 / 1.5, height: 90 / 1.5, image: "images/cactus_1.png" },
+    { width: 85 / 1.5, height: 85 / 1.5, image: "images/cactus_2.png" },
     { width: 68 / 1.5, height: 70 / 1.5, image: "images/cactus_3.png" },
 ];
 
