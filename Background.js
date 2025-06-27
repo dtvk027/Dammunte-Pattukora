@@ -5,22 +5,23 @@ export default class Background {
     this.image.src = imagePath;
     this.loaded = false;
 
-    // Game dimensions (800x200)
-    this.gameWidth = gameWidth; 
+    // Game dimensions
+    this.gameWidth = gameWidth;
     this.gameHeight = gameHeight;
     this.speed = speed;
     this.scaleRatio = scaleRatio;
 
-    // Positions for infinite scroll
+    // Scrolling positions
     this.x = 0;
     this.x2 = gameWidth;
 
     this.image.onload = () => {
+      console.log(`Image loaded: ${this.image.width}x${this.image.height}`);
       this.loaded = true;
-      // Calculate scaling to perfectly fit canvas height while maintaining aspect ratio
-      this.scale = gameHeight / this.image.height; // 200/400 = 0.5
-      this.renderWidth = this.image.width * this.scale; // 1600*0.5 = 800
-      this.renderHeight = gameHeight; // 200
+      // Calculate dimensions to perfectly fit canvas height
+      this.scale = gameHeight / this.image.height;
+      this.renderWidth = this.image.width * this.scale;
+      this.renderHeight = gameHeight;
     };
   }
 
@@ -36,13 +37,17 @@ export default class Background {
   }
 
   draw() {
-    if (!this.loaded) return;
+    if (!this.loaded) {
+      // Fallback - remove after debugging
+      this.ctx.fillStyle = "rgba(10,26,10,0.5)";
+      this.ctx.fillRect(0, 0, this.gameWidth, this.gameHeight);
+      return;
+    }
     
-    // Draw perfectly scaled background
     this.ctx.drawImage(
       this.image,
-      0, 0, this.image.width, this.image.height, // Source dimensions (full image)
-      this.x, 0, this.renderWidth, this.renderHeight // Canvas dimensions (scaled down)
+      0, 0, this.image.width, this.image.height,
+      this.x, 0, this.renderWidth, this.renderHeight
     );
     
     this.ctx.drawImage(
