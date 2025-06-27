@@ -5,23 +5,25 @@ export default class Background {
     this.image.src = imagePath;
     this.loaded = false;
 
-    // Game dimensions
     this.gameWidth = gameWidth;
     this.gameHeight = gameHeight;
     this.speed = speed;
     this.scaleRatio = scaleRatio;
 
-    // Scrolling positions
+    // For infinite scrolling
     this.x = 0;
     this.x2 = gameWidth;
 
     this.image.onload = () => {
-      console.log(`Image loaded: ${this.image.width}x${this.image.height}`);
+      console.log(`Background loaded: ${this.image.width}x${this.image.height}`);
       this.loaded = true;
-      // Calculate dimensions to perfectly fit canvas height
       this.scale = gameHeight / this.image.height;
       this.renderWidth = this.image.width * this.scale;
       this.renderHeight = gameHeight;
+    };
+
+    this.image.onerror = () => {
+      console.error("Failed to load background image!");
     };
   }
 
@@ -39,7 +41,7 @@ export default class Background {
   draw() {
     if (!this.loaded) {
       // Fallback - remove after debugging
-      this.ctx.fillStyle = "rgba(10,26,10,0.5)";
+      this.ctx.fillStyle = "rgba(255,0,0,0.5)";
       this.ctx.fillRect(0, 0, this.gameWidth, this.gameHeight);
       return;
     }
