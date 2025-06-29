@@ -114,18 +114,24 @@ function gameLoop(currentTime) {
     clearScreen();
 
     if (!gameOver && !waitingToStart) {
-      waveTime += frameTimeDelta * 0.001;
-      const baseSpeed = 0.8;
-      const waveAmplitude = 0.6;
-      const waveFrequency = 0.2;
-      const sine = Math.sin(waveTime * waveFrequency);
-      const eased = sine * sine;
-      gameSpeed = baseSpeed + eased * waveAmplitude;
-      background.update(gameSpeed, frameTimeDelta);
-      ground.update(gameSpeed, frameTimeDelta);
-      cactiController.update(gameSpeed, frameTimeDelta);
-      player.update(gameSpeed, frameTimeDelta);
-      score.update(frameTimeDelta);
+        // First update score so we can use it to control speed
+        score.update(frameTimeDelta);
+
+        // Get current score
+        const currentScore = score.getCurrentScore ? score.getCurrentScore() : 0;
+
+        // Control speed based on score
+        if (currentScore < 200) {
+            gameSpeed = GAME_SPEED_START; // Stay at base speed
+        } else {
+            gameSpeed += GAME_SPEED_INCREMENT * frameTimeDelta; // Slowly ramp up
+        }
+
+        // Update game elements
+        background.update(gameSpeed, frameTimeDelta);
+        ground.update(gameSpeed, frameTimeDelta);
+        cactiController.update(gameSpeed, frameTimeDelta);
+        player.update(gameSpeed, frameTimeDelta);
     }
 
     if (!gameOver && cactiController.collideWith(player)) {
@@ -135,7 +141,7 @@ function gameLoop(currentTime) {
     }
 
     // Draw game elements
-    background.draw(); // <-- DRAW BACKGROUND FIRST
+    background.draw();
     ground.draw();
     cactiController.draw();
     player.draw();
@@ -145,7 +151,6 @@ function gameLoop(currentTime) {
 
     requestAnimationFrame(gameLoop);
 }
-
 // ===================
 // Utility Functions
 // ===================
