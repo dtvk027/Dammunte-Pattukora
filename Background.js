@@ -33,8 +33,12 @@ export default class Background {
     this.x -= movement;
     this.x2 -= movement;
     
-    if (this.x <= -this.renderWidth) this.x = this.renderWidth;
-    if (this.x2 <= -this.renderWidth) this.x2 = this.renderWidth;
+    if (this.x <= -this.renderWidth) {
+      this.x = this.x2 + this.renderWidth;
+    }
+    if (this.x2 <= -this.renderWidth) {
+      this.x2 = this.x + this.renderWidth;
+    }
   }
 
   draw() {
