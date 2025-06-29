@@ -48,15 +48,16 @@ export default class Background {
     this.ctx.drawImage(
       this.image,
       0, 0, this.image.width, this.image.height,
-      this.x, 0, this.renderWidth, this.renderHeight
+      Math.floor(this.x), 0, this.renderWidth, this.renderHeight
     );
     
     this.ctx.drawImage(
       this.image,
       0, 0, this.image.width, this.image.height,
-      this.x2, 0, this.renderWidth, this.renderHeight
+      Math.floor(this.x2), 0, this.renderWidth, this.renderHeight
     );
   }
+
 
   reset() {
     this.x = 0;
