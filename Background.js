@@ -17,8 +17,7 @@ export default class Background {
     this.image.onload = () => {
       console.log(`Background loaded: ${this.image.width}x${this.image.height}`);
       this.loaded = true;
-      this.scale = gameHeight / this.image.height;
-      this.renderWidth = this.image.width * this.scale;
+      this.renderWidth = this.gameWidth;
       this.renderHeight = gameHeight;
     };
 
