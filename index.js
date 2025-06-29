@@ -115,9 +115,9 @@ function gameLoop(currentTime) {
 
     if (!gameOver && !waitingToStart) {
       waveTime += frameTimeDelta * 0.001;
-      const baseSpeed = 1.0;
-      const waveAmplitude = 1.2;
-      const waveFrequency = 0.25;
+      const baseSpeed = 0.5;
+      const waveAmplitude = 0.3;
+      const waveFrequency = 0.15;
       const sine = Math.sin(waveTime * waveFrequency);
       const eased = sine * sine;
       gameSpeed = baseSpeed + eased * waveAmplitude;
