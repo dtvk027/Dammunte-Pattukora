@@ -37,6 +37,7 @@ let player, ground, cactiController, score, background;
 let scaleRatio;
 let previousTime = null;
 let gameSpeed = GAME_SPEED_START;
+let waveTime = 0;
 let gameOver = false;
 let waitingToStart = true;
 let hasAddedEventListenersForRestart = false;
@@ -113,12 +114,18 @@ function gameLoop(currentTime) {
     clearScreen();
 
     if (!gameOver && !waitingToStart) {
-        background.update(gameSpeed, frameTimeDelta); // <-- UPDATE BACKGROUND
-        ground.update(gameSpeed, frameTimeDelta);
-        cactiController.update(gameSpeed, frameTimeDelta);
-        player.update(gameSpeed, frameTimeDelta);
-        score.update(frameTimeDelta);
-        gameSpeed += frameTimeDelta * GAME_SPEED_INCREMENT;
+      waveTime += frameTimeDelta * 0.001;
+      const baseSpeed = 1.0;
+      const waveAmplitude = 1.2;
+      const waveFrequency = 0.25;
+      const sine = Math.sin(waveTime * waveFrequency);
+      const eased = sine * sine;
+      gameSpeed = baseSpeed + eased * waveAmplitude;
+      background.update(gameSpeed, frameTimeDelta);
+      ground.update(gameSpeed, frameTimeDelta);
+      cactiController.update(gameSpeed, frameTimeDelta);
+      player.update(gameSpeed, frameTimeDelta);
+      score.update(frameTimeDelta);
     }
 
     if (!gameOver && cactiController.collideWith(player)) {
