@@ -157,7 +157,6 @@ function gameLoop(currentTime) {
 
 // ===================
 // Utility Functions
-// ===================
 function clearScreen() {
   ctx.fillStyle = "#0a1a0a";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -205,21 +204,13 @@ function reset() {
 // Event Listeners
 // ===================
 window.addEventListener("resize", () => setTimeout(setScreen, 500));
+
 if (screen.orientation) {
   screen.orientation.addEventListener("change", setScreen);
 }
-window.addEventListener("keyup", startGame);
-window.addEventListener("touchstart", startGame);
 
-function startGame() {
-  if (waitingToStart) {
-    waitingToStart = false;
-    ground.reset();
-    cactiController.reset();
-    score.reset();
-    gameSpeed = GAME_SPEED_START;
-  }
-}
+window.addEventListener("keyup", reset, { once: true });
+window.addEventListener("touchstart", reset, { once: true });
 
 // ===================
 // Start Game
