@@ -115,20 +115,25 @@ function gameLoop(currentTime) {
 
   clearScreen();
 
-  if (!gameOver && !waitingToStart) {
-    const currentScore = score.getCurrentScore();
+  const currentScore = score.getCurrentScore();
 
+  if (!gameOver && !waitingToStart) {
     if (currentScore >= 200) {
       gameSpeed = Math.min(gameSpeed + frameTimeDelta * GAME_SPEED_INCREMENT, MAX_GAME_SPEED);
     } else {
       gameSpeed = GAME_SPEED_START;
     }
 
-    background.update(gameSpeed, frameTimeDelta);
-    ground.update(gameSpeed, frameTimeDelta);
+    score.update(frameTimeDelta);
+  }
+
+  // Update background and ground *always*, even when waiting to start
+  background.update(gameSpeed, frameTimeDelta);
+  ground.update(gameSpeed, frameTimeDelta);
+
+  if (!gameOver && !waitingToStart) {
     cactiController.update(gameSpeed, frameTimeDelta);
     player.update(gameSpeed, frameTimeDelta);
-    score.update(frameTimeDelta);
   }
 
   if (!gameOver && cactiController.collideWith(player)) {
@@ -137,6 +142,7 @@ function gameLoop(currentTime) {
     setupGameReset();
   }
 
+  // Draw everything
   background.draw();
   ground.draw();
   cactiController.draw();
@@ -147,6 +153,7 @@ function gameLoop(currentTime) {
 
   requestAnimationFrame(gameLoop);
 }
+
 
 // ===================
 // Utility Functions
@@ -201,8 +208,18 @@ window.addEventListener("resize", () => setTimeout(setScreen, 500));
 if (screen.orientation) {
   screen.orientation.addEventListener("change", setScreen);
 }
-window.addEventListener("keyup", reset, { once: true });
-window.addEventListener("touchstart", reset, { once: true });
+window.addEventListener("keyup", startGame);
+window.addEventListener("touchstart", startGame);
+
+function startGame() {
+  if (waitingToStart) {
+    waitingToStart = false;
+    ground.reset();
+    cactiController.reset();
+    score.reset();
+    gameSpeed = GAME_SPEED_START;
+  }
+}
 
 // ===================
 // Start Game
