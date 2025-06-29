@@ -55,8 +55,8 @@ function createSprites() {
     background = new Background( // <-- NEW BACKGROUND INIT
         ctx,
         BACKGROUND_CONFIG.image,
-        GAME_WIDTH,
-        GAME_HEIGHT,
+        canvas.width,
+        canvas.height,
         BACKGROUND_CONFIG.speed,
         scaleRatio
     );
