@@ -35,5 +35,8 @@ export default class Score {
     }
   }
 
-  // Removed draw() method since it's no longer needed
+  // ✅ New method for game speed logic
+  getCurrentScore() {
+    return Math.floor(this.score);
+  }
 }
