@@ -13,19 +13,19 @@ const GAME_WIDTH = 800;
 const GAME_HEIGHT = 200;
 const PLAYER_WIDTH = 88 / 1.5;
 const PLAYER_HEIGHT = 94 / 1.5;
-const MAX_JUMP_HEIGHT = GAME_HEIGHT;
+const MAX_JUMP_HEIGHT = 190;
 const MIN_JUMP_HEIGHT = 150;
 const GROUND_WIDTH = 2400;
 const GROUND_HEIGHT = 24;
 const GROUND_AND_CACTUS_SPEED = 0.5;
 const GAME_SPEED_START = 1.0;
-const GAME_SPEED_INCREMENT = 0.00005; // much faster (feel free to tweak!)
+const GAME_SPEED_INCREMENT = 0.00003; // much faster (feel free to tweak!)
 const GAME_SPEED_MAX = 3.0;
 
 
 const BACKGROUND_CONFIG = {
   image: "images/bg.png", // <-- Your background image path
-  speed: 0.15 // Parallax speed
+  speed: 0.1 // Parallax speed
 };
 
 const CACTI_CONFIG = [
