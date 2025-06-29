@@ -17,12 +17,10 @@ const MAX_JUMP_HEIGHT = GAME_HEIGHT;
 const MIN_JUMP_HEIGHT = 150;
 const GROUND_WIDTH = 2400;
 const GROUND_HEIGHT = 24;
-
-const GAME_SPEED_START = 1.0;
-const GAME_SPEED_INCREMENT = 0.000005; // Slow and smooth
-const MAX_GAME_SPEED = 2.5;
-
 const GROUND_AND_CACTUS_SPEED = 0.5;
+const GAME_SPEED_START = 1.0;
+const GAME_SPEED_INCREMENT = 0.000005;
+const MAX_GAME_SPEED = 2.5;
 
 const BACKGROUND_CONFIG = {
   image: "images/bg.png",
@@ -115,25 +113,20 @@ function gameLoop(currentTime) {
 
   clearScreen();
 
-  const currentScore = score.getCurrentScore();
-
   if (!gameOver && !waitingToStart) {
+    const currentScore = score.getCurrentScore();
+
     if (currentScore >= 200) {
       gameSpeed = Math.min(gameSpeed + frameTimeDelta * GAME_SPEED_INCREMENT, MAX_GAME_SPEED);
     } else {
       gameSpeed = GAME_SPEED_START;
     }
 
-    score.update(frameTimeDelta);
-  }
-
-  // Update background and ground *always*, even when waiting to start
-  background.update(gameSpeed, frameTimeDelta);
-  ground.update(gameSpeed, frameTimeDelta);
-
-  if (!gameOver && !waitingToStart) {
+    background.update(gameSpeed, frameTimeDelta);
+    ground.update(gameSpeed, frameTimeDelta);
     cactiController.update(gameSpeed, frameTimeDelta);
     player.update(gameSpeed, frameTimeDelta);
+    score.update(frameTimeDelta);
   }
 
   if (!gameOver && cactiController.collideWith(player)) {
@@ -142,7 +135,7 @@ function gameLoop(currentTime) {
     setupGameReset();
   }
 
-  // Draw everything
+  // Draw game elements
   background.draw();
   ground.draw();
   cactiController.draw();
@@ -154,9 +147,9 @@ function gameLoop(currentTime) {
   requestAnimationFrame(gameLoop);
 }
 
-
 // ===================
 // Utility Functions
+// ===================
 function clearScreen() {
   ctx.fillStyle = "#0a1a0a";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
