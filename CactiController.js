@@ -1,42 +1,58 @@
 import Cactus from "./Cactus.js";
 
 export default class CactiController {
-  CACTUS_INTERVAL_MIN = 500;
-  CACTUS_INTERVAL_MAX = 2000;
+  static CACTUS_INTERVAL_MIN = 500;
+  static CACTUS_INTERVAL_MAX = 2000;
 
-  nextCactusInterval = null;
-  cacti = [];
+  #ctx;
+  #canvas;
+  #cactiImages;
+  #scaleRatio;
+  #baseSpeed;
 
-  constructor(ctx, cactiImages, scaleRatio, speed) {
-    this.ctx = ctx;
-    this.canvas = ctx.canvas;
-    this.cactiImages = cactiImages;
-    this.scaleRatio = scaleRatio;
-    this.speed = speed;
+  #nextCactusInterval = 0;
+  #cacti = [];
 
-    this.setNextCactusTime();
+  constructor(ctx, cactiImages, scaleRatio = 1, baseSpeed = 1) {
+    this.#ctx = ctx;
+    this.#canvas = ctx.canvas;
+    this.#cactiImages = cactiImages;
+    this.#scaleRatio = scaleRatio;
+    this.#baseSpeed = baseSpeed;
+
+    this.#setNextCactusTime();
   }
 
-  setNextCactusTime() {
-    const num = this.getRandomNumber(
-      this.CACTUS_INTERVAL_MIN,
-      this.CACTUS_INTERVAL_MAX
-    );
-
-    this.nextCactusInterval = num;
-  }
-
-  getRandomNumber(min, max) {
+  #getRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  createCactus() {
-    const index = this.getRandomNumber(0, this.cactiImages.length - 1);
-    const cactusImage = this.cactiImages[index];
-    const x = this.canvas.width * 1.5;
-    const y = this.canvas.height - cactusImage.height;
+  #getDynamicInterval(gameSpeed) {
+    const difficultyMultiplier = Math.min(gameSpeed, 3);
+    const min = CactiController.CACTUS_INTERVAL_MIN / difficultyMultiplier;
+    const max = CactiController.CACTUS_INTERVAL_MAX / difficultyMultiplier;
+
+    return this.#getRandomNumber(min, max);
+  }
+
+  #setNextCactusTime(gameSpeed = 1) {
+    this.#nextCactusInterval = this.#getDynamicInterval(gameSpeed);
+  }
+
+  #shouldSpawnGroup() {
+    return Math.random() < 0.25; // 25% chance to spawn a group
+  }
+
+  #createCactus(xOffset = 0) {
+    const index = this.#getRandomNumber(0, this.#cactiImages.length - 1);
+    const cactusImage = this.#cactiImages[index];
+
+    const x = this.#canvas.width * 1.5 + xOffset;
+    const yOffset = this.#getRandomNumber(0, 10) * this.#scaleRatio;
+    const y = this.#canvas.height - cactusImage.height - yOffset;
+
     const cactus = new Cactus(
-      this.ctx,
+      this.#ctx,
       x,
       y,
       cactusImage.width,
@@ -44,32 +60,50 @@ export default class CactiController {
       cactusImage.image
     );
 
-    this.cacti.push(cactus);
+    this.#cacti.push(cactus);
+  }
+
+  #createCactusGroup() {
+    const groupSize = this.#getRandomNumber(2, 3); // Groups are 2 or 3
+    const spacing = 20 * this.#scaleRatio;
+
+    for (let i = 0; i < groupSize; i++) {
+      const xOffset = i * (60 + spacing); // Approx cactus width
+      this.#createCactus(xOffset);
+    }
   }
 
   update(gameSpeed, frameTimeDelta) {
-    if (this.nextCactusInterval <= 0) {
-      this.createCactus();
-      this.setNextCactusTime();
-    }
-    this.nextCactusInterval -= frameTimeDelta;
+    this.#nextCactusInterval -= frameTimeDelta;
 
-    this.cacti.forEach((cactus) => {
-      cactus.update(this.speed, gameSpeed, frameTimeDelta, this.scaleRatio);
+    if (this.#nextCactusInterval <= 0) {
+      if (this.#shouldSpawnGroup()) {
+        this.#createCactusGroup();
+      } else {
+        this.#createCactus();
+      }
+      this.#setNextCactusTime(gameSpeed);
+    }
+
+    const speed = this.#baseSpeed * gameSpeed;
+
+    this.#cacti.forEach((cactus) => {
+      cactus.update(speed, gameSpeed, frameTimeDelta, this.#scaleRatio);
     });
 
-    this.cacti = this.cacti.filter((cactus) => cactus.x > -cactus.width);
+    this.#cacti = this.#cacti.filter((cactus) => cactus.x + cactus.width > 0);
   }
 
   draw() {
-    this.cacti.forEach((cactus) => cactus.draw());
+    this.#cacti.forEach((cactus) => cactus.draw());
   }
 
   collideWith(sprite) {
-    return this.cacti.some((cactus) => cactus.collideWith(sprite));
+    return this.#cacti.some((cactus) => cactus.collideWith(sprite));
   }
 
   reset() {
-    this.cacti = [];
+    this.#cacti = [];
+    this.#setNextCactusTime();
   }
 }
