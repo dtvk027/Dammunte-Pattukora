@@ -30,8 +30,8 @@ const BACKGROUND_CONFIG = {
 
 const CACTI_CONFIG = [
     { width: 65 / 1.5, height: 90 / 1.5, image: "images/cactus_1.png" },
-    { width: 85 / 1.5, height: 85 / 1.5, image: "images/cactus_2.png" },
-    { width: 68 / 1.5, height: 70 / 1.5, image: "images/cactus_3.png" },
+    { width: 80 / 1.5, height: 54 / 1.5, image: "images/cactus_2.png" },
+    { width: 70 / 1.5, height: 36 / 1.5, image: "images/cactus_3.png" },
 ];
 
 // Game Variables
