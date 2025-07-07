@@ -8,10 +8,7 @@ export default class CactiController {
   #baseSpeed;
 
   #cacti = [];
-  #minGap = 150; // in pixels, scaled
-  #maxGap = 350;
-
-  #distanceSinceLastCactus = 0;
+  #nextSpawnDistance = 0;
 
   constructor(ctx, cactiImages, scaleRatio = 1, baseSpeed = 1) {
     this.#ctx = ctx;
@@ -19,66 +16,60 @@ export default class CactiController {
     this.#cactiImages = cactiImages;
     this.#scaleRatio = scaleRatio;
     this.#baseSpeed = baseSpeed;
+    this.#setNextSpawnDistance(1);
   }
 
-  #getRandomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
+  #getRandomImage() {
+    const index = Math.floor(Math.random() * this.#cactiImages.length);
+    return this.#cactiImages[index];
   }
 
-  #shouldSpawnGroup() {
-    return Math.random() < 0.3; // 30% chance
+  // Set the next spawn distance based on game speed
+  #setNextSpawnDistance(gameSpeed) {
+    const baseDistance = 500; // base pixels between cacti
+    const minDistance = 250;  // clamp minimum
+    this.#nextSpawnDistance = Math.max(minDistance, baseDistance - gameSpeed * 50);
+  }
+
+  // Check the distance from the last cactus to right edge
+  #canSpawnNewCactus() {
+    if (this.#cacti.length === 0) return true;
+
+    const lastCactus = this.#cacti[this.#cacti.length - 1];
+    const distanceFromLast = this.#canvas.width - (lastCactus.x + lastCactus.width);
+    return distanceFromLast >= this.#nextSpawnDistance;
   }
 
   #spawnCactus(xOffset = 0) {
-    const index = this.#getRandomNumber(0, this.#cactiImages.length - 1);
-    const image = this.#cactiImages[index];
-
+    const cactusImage = this.#getRandomImage();
     const x = this.#canvas.width + xOffset;
-    const y = this.#canvas.height - image.height;
+    const y = this.#canvas.height - cactusImage.height;
 
     const cactus = new Cactus(
       this.#ctx,
       x,
       y,
-      image.width,
-      image.height,
-      image.image
+      cactusImage.width,
+      cactusImage.height,
+      cactusImage.image
     );
 
     this.#cacti.push(cactus);
   }
 
-  #maybeSpawnCactus(gameSpeed) {
-    const minGap = this.#minGap / gameSpeed * this.#scaleRatio;
-    const maxGap = this.#maxGap / gameSpeed * this.#scaleRatio;
-
-    if (this.#distanceSinceLastCactus >= this.#getRandomNumber(minGap, maxGap)) {
-      if (this.#shouldSpawnGroup()) {
-        const groupSize = this.#getRandomNumber(2, 3);
-        const spacing = 20 * this.#scaleRatio;
-        for (let i = 0; i < groupSize; i++) {
-          this.#spawnCactus(i * (spacing + 30)); // 30 = avg cactus width
-        }
-      } else {
-        this.#spawnCactus();
-      }
-
-      this.#distanceSinceLastCactus = 0;
-    }
-  }
-
   update(gameSpeed, frameTimeDelta) {
     const speed = this.#baseSpeed * gameSpeed;
-    const distanceThisFrame = speed * frameTimeDelta;
 
-    this.#distanceSinceLastCactus += distanceThisFrame;
-
-    this.#maybeSpawnCactus(gameSpeed);
+    if (this.#canSpawnNewCactus()) {
+      this.#spawnCactus();
+      this.#setNextSpawnDistance(gameSpeed);
+    }
 
     this.#cacti.forEach((cactus) => {
       cactus.update(speed, gameSpeed, frameTimeDelta, this.#scaleRatio);
     });
 
+    // Remove cacti that are off-screen
     this.#cacti = this.#cacti.filter((cactus) => cactus.x + cactus.width > 0);
   }
 
@@ -92,6 +83,6 @@ export default class CactiController {
 
   reset() {
     this.#cacti = [];
-    this.#distanceSinceLastCactus = 0;
+    this.#setNextSpawnDistance(1);
   }
 }
