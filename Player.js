@@ -7,7 +7,7 @@ export default class Player {
   jumpInProgress = false;
   falling = false;
   JUMP_SPEED = 0.6;
-  GRAVITY = 0.4;
+  GRAVITY = 0.3;
 
   constructor(ctx, width, height, minJumpHeight, maxJumpHeight, scaleRatio) {
     this.ctx = ctx;
