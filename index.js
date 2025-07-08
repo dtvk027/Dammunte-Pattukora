@@ -20,7 +20,7 @@ const GROUND_HEIGHT = 24;
 const GROUND_AND_CACTUS_SPEED = 0.5;
 const GAME_SPEED_START = 1.0;
 const GAME_SPEED_INCREMENT = 0.000007; // much faster (feel free to tweak!)
-const GAME_SPEED_MAX = 3.0;
+const GAME_SPEED_MAX = 2.5;
 
 
 const BACKGROUND_CONFIG = {
@@ -128,11 +128,15 @@ function gameLoop(currentTime) {
         const currentScore = score.getCurrentScore ? score.getCurrentScore() : 0;
 
         // Control speed based on score
-        if (currentScore < 200) {
+        if (currentScore < 500) {
             gameSpeed = GAME_SPEED_START; // Stay at base speed
         } else {
-            gameSpeed += GAME_SPEED_INCREMENT * frameTimeDelta; // Slowly ramp up
-        }
+            const scoreFactor = (currentScore - 500) / 1000;
+            gameSpeed = Math.min(
+              GAME_SPEED_START + scoreFactor * (GAME_SPEED_MAX - GAME_SPEED_START),
+              GAME_SPEED_MAX // Slowly ramp up
+            );
+        }  
 
         // Update game elements
         background.update(gameSpeed, frameTimeDelta);
