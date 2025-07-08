@@ -85,20 +85,25 @@ function createSprites() {
 // Game Setup
 // ===================
 function setScreen() {
-    scaleRatio = getScaleRatio();
+    scaleRatio = Math.max(0.5, getScaleRatio()); // <-- Prevent game from becoming too tiny
     canvas.width = GAME_WIDTH * scaleRatio;
     canvas.height = GAME_HEIGHT * scaleRatio;
     createSprites();
 }
 
 function getScaleRatio() {
-    const screenHeight = Math.min(window.innerHeight, document.documentElement.clientHeight);
-    const screenWidth = Math.min(window.innerWidth, document.documentElement.clientWidth);
+    const screenHeight = window.innerHeight;
+    const screenWidth = window.innerWidth;
 
-    return screenWidth / screenHeight < GAME_WIDTH / GAME_HEIGHT
+    const screenRatio = screenWidth / screenHeight;
+    const gameRatio = GAME_WIDTH / GAME_HEIGHT;
+
+    // Make sure game fits in available space — no clipping
+    return screenRatio < gameRatio
         ? screenWidth / GAME_WIDTH
         : screenHeight / GAME_HEIGHT;
 }
+
 
 // ===================
 // Game Loop
