@@ -29,7 +29,7 @@ const BACKGROUND_CONFIG = {
 };
 
 const CACTI_CONFIG = [
-    { width: 65 / 1.5, height: 110 / 1.5, image: "images/cactus_1.png" },
+    { width: 65 / 1.5, height: 100 / 1.5, image: "images/cactus_1.png" },
     { width: 80 / 1.5, height: 80 / 1.5, image: "images/cactus_2.png" },
     { width: 70 / 1.5, height: 75 / 1.5, image: "images/cactus_3.png" },
 ];
