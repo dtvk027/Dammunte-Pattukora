@@ -19,7 +19,7 @@ const GROUND_WIDTH = 2400;
 const GROUND_HEIGHT = 24;
 const GROUND_AND_CACTUS_SPEED = 0.5;
 const GAME_SPEED_START = 1.0;
-const GAME_SPEED_INCREMENT = 0.00003; // much faster (feel free to tweak!)
+const GAME_SPEED_INCREMENT = 0.000007; // much faster (feel free to tweak!)
 const GAME_SPEED_MAX = 3.0;
 
 
