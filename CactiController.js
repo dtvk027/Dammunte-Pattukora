@@ -19,16 +19,34 @@ export default class CactiController {
     this.#setNextSpawnDistance(1);
   }
 
+  #lastCactusType = null;
+
+  // Choose a cactus image but prevent same type repeating too often
   #getRandomImage() {
-    const index = Math.floor(Math.random() * this.#cactiImages.length);
+    let index;
+    let tries = 0;
+    do {
+      index = Math.floor(Math.random() * this.#cactiImages.length);
+      tries++;
+    } while (
+      this.#cactiImages.length > 1 &&
+      index === this.#lastCactusType &&
+      tries < 5 // prevent infinite loop in case of very small list
+    );
+
+    this.#lastCactusType = index;
     return this.#cactiImages[index];
   }
 
-  // Set the next spawn distance based on game speed
+  // Set the next spawn distance with more spacing randomness
   #setNextSpawnDistance(gameSpeed) {
-    const baseDistance = 500; // base pixels between cacti
-    const minDistance = 250;  // clamp minimum
-    this.#nextSpawnDistance = Math.max(minDistance, baseDistance - gameSpeed * 50);
+    const minDistance = 400 * this.#scaleRatio;
+    const maxDistance = 800 * this.#scaleRatio;
+    const speedFactor = Math.max(1, gameSpeed);
+
+    // Make it slightly vary with speed, but clamp within range
+    const randomDistance = minDistance + Math.random() * (maxDistance - minDistance);
+    this.#nextSpawnDistance = randomDistance / speedFactor;
   }
 
   // Check the distance from the last cactus to right edge
